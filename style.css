@@ -1,0 +1,37 @@
+*{
+    box-sizing:border-box;
+}
+html{
+    margin:0;
+    padding:0;
+    background:#334;
+    color:#fec;
+    font:22px/1.5 "Noto Serif",serif,sans-serif;
+}
+body{
+    margin:0 auto;
+}
+main{
+    text-align:center;
+    max-width:32rem;
+    margin:0 auto;
+    padding:2rem;
+}
+div#stack{
+    font-size:2rem;
+    line-height;
+    vertical-align:top;
+    max-height:16rem;
+    overflow:hidden;
+    transition:0.3s ease;
+    width:4rem;
+    margin:0 auto;
+}
+div#stack>div{
+    transition:0.3s ease;
+}
+div#stack>div:first-of-type{
+    font-size:3rem;
+    outline:2px solid #fff;
+    color:#fff;
+}
