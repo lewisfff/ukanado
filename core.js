@@ -5,7 +5,7 @@ class Game {
         window.addEventListener('keypress', e => this.handleInputChar(e.key));
         this.currentLevel = new Level;
         this.stack = new Stack('stack');
-        this.stack.injectKeysFromMap(this.currentLevel.data);
+        this.stack.injectKeys(this.currentLevel.data);
         this.inputBuffer = "";
     }
 
@@ -15,29 +15,36 @@ class Game {
             this.inputBuffer = this.inputBuffer.substring(1);
         }
 
+        if(this.checkAnswer()){
+            this.clearCurrentQuiz();
+        }
+    }
+    
+    checkAnswer() {
         if(this.inputBuffer == this.getCurrentAnswer()){
             console.log('answer: '+ this.inputBuffer + 
                 ' is equal to question: '+ this.getCurrentAnswer() + 
                 ' (' + this.getCurrentQuestion() + ').');
+            return true;
         } else {
             console.log('answer: '+ this.inputBuffer + 
                 ' is NOT equal to question: '+ this.getCurrentAnswer() + 
                 ' (' + this.getCurrentQuestion() + ').');
+            return false;
         }
-        // console.log(this.inputBuffer, this.inputBuffer.length, this.getCurrentQuestion(), this.getCurrentAnswer(), this.getCurrentAnswer().length);
     }
 
     getCurrentQuestion() {
-        return this.currentLevel.data.entries().next().value[0];
+        return Object.keys(this.currentLevel.data[0])[0];
     }
 
     getCurrentAnswer() {
-        return this.currentLevel.data.entries().next().value[1];
+        return Object.values(game.currentLevel.data[0])[0];
     }
 
     clearCurrentQuiz() {
-        this.buffer = "";
-        this.currentLevel.delete(this.currentLevel.data.entries().next());
+        this.inputBuffer = "";
+        this.currentLevel.data.shift();
     }
 
     moveToNextQuestion() {
@@ -46,11 +53,7 @@ class Game {
 
             return false;
         }
-
-
     }
-
-
 }
 
 class Stack {
@@ -70,13 +73,12 @@ class Stack {
         this.stack.removeChild(0);
     }
 
-    //todo decouple
-    injectKeysFromMap(map) {
+    injectKeys(array) {
         let buffer = "";
-        for (let [k, _] of map) {
-            buffer += '<div>' + k + '</div>';
+        var arrayLength = array.length
+        for (var i = 0; i < arrayLength; i++) {
+            buffer += '<div>' + Object.keys(array[i])[0] + '</div>';
         }
-
         this._setHTML(buffer);
     }
 }
@@ -87,18 +89,18 @@ class Level {
     }
 
     generateLevel() {
-        return new Map([
-            ["し", "shi"],
-            ["あ", "a"],
-            ["い", "i"],
-            ["う", "u"],
-            ["え", "e"],
-            ["お", "o"],
-            ["か", "ka"],
-            ["つ", "tsu"],
-            ["め", "me"],
-            ["ぽ", "po"]
-        ]);
+        return [
+            {"し": "shi"},
+            {"あ": "a"},
+            {"い": "i"},
+            {"う": "u"},
+            {"え": "e"},
+            {"お": "o"},
+            {"か": "ka"},
+            {"つ": "tsu"},
+            {"め": "me"},
+            {"ぽ": "po"}
+        ];
     }
 }
 
