@@ -45,6 +45,7 @@ class Game {
     clearCurrentQuiz() {
         this.inputBuffer = "";
         this.currentLevel.data.shift();
+        this.stack.shift();
     }
 
     moveToNextQuestion() {
@@ -70,7 +71,7 @@ class Stack {
     }
 
     shift() {
-        this.stack.removeChild(0);
+        this.stack.removeChild(this.stack.childNodes[0]);
     }
 
     injectKeys(array) {
