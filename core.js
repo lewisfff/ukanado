@@ -1,11 +1,12 @@
 'use strict';
 
 class Game {
+
     constructor() {
         window.addEventListener('keypress', e => this.handleInputChar(e.key));
         this.currentLevel = new Level;
         this.stack = new Stack('stack');
-        this.stack.injectKeys(this.currentLevel.data);
+        this.displayQuestions();
         this.inputBuffer = "";
     }
 
@@ -15,23 +16,16 @@ class Game {
             this.inputBuffer = this.inputBuffer.substring(1);
         }
 
-        if(this.checkAnswer()){
+        if(this.answeredCorrectly()){
             this.clearCurrentQuiz();
         }
     }
-    
-    checkAnswer() {
+
+    answeredCorrectly() {
         if(this.inputBuffer == this.getCurrentAnswer()){
-            console.log('answer: '+ this.inputBuffer + 
-                ' is equal to question: '+ this.getCurrentAnswer() + 
-                ' (' + this.getCurrentQuestion() + ').');
             return true;
-        } else {
-            console.log('answer: '+ this.inputBuffer + 
-                ' is NOT equal to question: '+ this.getCurrentAnswer() + 
-                ' (' + this.getCurrentQuestion() + ').');
-            return false;
         }
+        return false;
     }
 
     getCurrentQuestion() {
@@ -46,18 +40,25 @@ class Game {
         this.inputBuffer = "";
         this.currentLevel.data.shift();
         this.stack.shift();
+
+        if(this.currentLevel.data.length == 0) {
+            console.info('end game');
+        }
     }
 
-    moveToNextQuestion() {
-        if(this.currentLevel.Length == 1) {
-            console.info('end game');
-
-            return false;
+    displayQuestions() {
+        let questions = [];
+        let levelData = this.currentLevel.data;
+        for (let i = 0; i < levelData.length; i++) {
+            questions.push(Object.keys(levelData[i])[0]);
         }
+
+        this.stack.inject(questions);
     }
 }
 
 class Stack {
+
     constructor(id) {
         this.stack = document.getElementById(id);
     }
@@ -74,17 +75,18 @@ class Stack {
         this.stack.removeChild(this.stack.childNodes[0]);
     }
 
-    injectKeys(array) {
-        let buffer = "";
-        var arrayLength = array.length
-        for (var i = 0; i < arrayLength; i++) {
-            buffer += '<div>' + Object.keys(array[i])[0] + '</div>';
+    inject(array) {
+        let html = ""
+        for (let i = 0; i < array.length; i++) {
+            html += "<div>" + array[i] + "</div>";
         }
-        this._setHTML(buffer);
+
+        this._setHTML(html);
     }
 }
 
 class Level {
+
     constructor() {
         this.data = this.generateLevel();
     }
@@ -105,20 +107,4 @@ class Level {
     }
 }
 
-class Char {
-    constructor() {
-
-    }
-}
-
-// window.addEventListener('keypress', onKeyHandler);
-
-
-let game = new Game;
-console.log(game.currentLevel);
-// function onKeyHandler(event) {
-//     console.log(event.key);
-//     game.
-// }
-
-// console.table(level1.generateLevel());
+var game = new Game;
