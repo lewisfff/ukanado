@@ -30,7 +30,7 @@ div#stack{
     overflow:hidden;
     transition:0.3s ease;
     width:4rem;
-    margin:0 auto;
+    margin:0.75rem auto;
 }
 div#stack:after{
     content:"";
