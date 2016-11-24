@@ -10,19 +10,29 @@ class Game {
     }
 
     handleInputChar(char) {
-        this.buffer += char;
-        if(this.buffer.length > 4){
-            this.buffer = buffer.substring(1);
+        this.inputBuffer += char;
+        if(this.inputBuffer.length > this.getCurrentAnswer().length){
+            this.inputBuffer = this.inputBuffer.substring(1);
         }
-        console.log(char, romaji, romajiLength);
+
+        if(this.inputBuffer == this.getCurrentAnswer()){
+            console.log('answer: '+ this.inputBuffer + 
+                ' is equal to question: '+ this.getCurrentAnswer() + 
+                ' (' + this.getCurrentQuestion() + ').');
+        } else {
+            console.log('answer: '+ this.inputBuffer + 
+                ' is NOT equal to question: '+ this.getCurrentAnswer() + 
+                ' (' + this.getCurrentQuestion() + ').');
+        }
+        // console.log(this.inputBuffer, this.inputBuffer.length, this.getCurrentQuestion(), this.getCurrentAnswer(), this.getCurrentAnswer().length);
     }
 
     getCurrentQuestion() {
-        this.currentLevel.data.entries().next().value[0];
+        return this.currentLevel.data.entries().next().value[0];
     }
 
     getCurrentAnswer() {
-        this.currentLevel.data.entries().next().value[1];
+        return this.currentLevel.data.entries().next().value[1];
     }
 
     clearCurrentQuiz() {
