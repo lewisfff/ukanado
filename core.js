@@ -154,8 +154,8 @@ class ScoreDisplay {
     }
 
     getSecondsElapsed(start, end) {
-        console.log(end - start)
-        return (end - start);
+        // console.log(end - start)
+        return (end - start) / 1000;
     }
 
     getGrade() {
@@ -167,7 +167,7 @@ class ScoreDisplay {
     }
 
     _inject() {
-        this._injectTime();
+        this.injectTime();
     }
 
     injectTime(array) {
