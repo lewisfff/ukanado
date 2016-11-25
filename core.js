@@ -18,7 +18,7 @@ class Game {
         }
 
         if (this._answeredCorrectly()) {
-            this._clearCurrentQuiz();
+            this.clearCurrentQuiz();
         }
     }
 
