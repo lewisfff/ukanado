@@ -18,7 +18,7 @@ class Game {
         }
 
         if (this._answeredCorrectly()) {
-            this._clearCurrentQuiz();
+            this.clearCurrentQuiz();
         }
     }
 
@@ -95,6 +95,8 @@ class Level {
 
     generateLevel() {
         return [
+        {"にゃ": "nya"},
+        {"ゐ": "wi"},
         {"し": "shi"},
         {"あ": "a"},
         {"い": "i"},
