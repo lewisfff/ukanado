@@ -29,7 +29,7 @@ div#stack{
     position: relative;
     overflow:hidden;
     transition:0.3s ease;
-    width:4rem;
+    width:6rem;
     margin:0.75rem auto;
 }
 div#stack:after{

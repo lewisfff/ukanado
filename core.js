@@ -95,6 +95,8 @@ class Level {
 
     generateLevel() {
         return [
+        {"にゃ": "nya"},
+        {"ゐ": "wi"},
         {"し": "shi"},
         {"あ": "a"},
         {"い": "i"},
