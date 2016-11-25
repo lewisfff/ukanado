@@ -99,6 +99,8 @@ class Level {
             level.push(hiragana[~~(Math.random() * hiragana.length)]);
         }
         return level;
+        {"にゃ": "nya"},
+        {"ゐ": "wi"},
     }
 }
 
