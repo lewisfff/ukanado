@@ -1,7 +1,7 @@
 *{
     box-sizing:border-box;
     user-select: none;
-    outline:1px solid rgba(255,0,51,0.25);
+    /*outline:1px solid rgba(255,0,51,0.25);*/
 }
 html{
     margin:0;
