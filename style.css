@@ -49,6 +49,9 @@ div#stack:after{
     bottom:0;
     position:absolute;
 }
+div#stack:empty:after{
+    outline:none;
+}
 div#stack>div{
     transition:0.22s ease-out;
 }

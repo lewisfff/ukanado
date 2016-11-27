@@ -16,7 +16,7 @@ class Game {
     _handleInputChar(char) {
         this.inputBuffer += char;
 
-        if (this.score.timerStopped == false) {
+        if (this.score.timerStopped == true) {
             this.score.startTimer(); 
         }
 
@@ -54,6 +54,7 @@ class Game {
 
         if (this.currentLevel.data.length == 0) {
             console.info('end game');
+            this.score.endTimer();
         }
     }
 
@@ -133,7 +134,7 @@ class ScoreDisplay {
     _init() {
         this.startTime = 0;
         this.endTime = 0;
-        this.timerStopped = false;
+        this.timerStopped = true;
         this.progress = 0;
     }
 
@@ -149,27 +150,23 @@ class ScoreDisplay {
 
     startTimer() {
         if (this.startTime == 0) {
-            this.timerStopped = true;
+            this.timerStopped = false;
             this.startTime = new Date;
             requestAnimationFrame(this.updateTimer.bind(this));
         }
     }
 
     updateTimer() {
-        if(this.timerStopped){
+        if(!this.timerStopped){
             requestAnimationFrame(this.updateTimer.bind(this));
             this.injectTime();
         }
     }
 
     endTimer() {
-        if (this.timerUpdateId == 0) {
-            this.endTime = new Date;
-        }
-        if (this.updateTimer) {
-            this.timerStopped = true;
-        }
-        this.getSecondsElapsed(this.startTime, this.endTime);
+        this.endTime = new Date;
+        this.timerStopped = true;
+        var finalTime = this.getSecondsElapsed(this.startTime, this.endTime);
     }
 
     getSecondsElapsed(start, end) {
@@ -195,7 +192,6 @@ class ScoreDisplay {
     }
 
     injectProgress() {
-        console.log('why');
         this.score.innerHTML = this.getProgress();
     }
 
