@@ -14,7 +14,7 @@ Your web browser must support ES6 to use this version, a compiled (ES2015) versi
 - [x] All kana (including digraphs, diacritics and obsolete)
 - [ ] Katakana conversion (unicode)
 - [ ] Split classes into separate files and refactor (needed)
-- [ ] Slide stack up when complete question
+- [x] Slide stack up when complete question
 - [ ] Github pages transpile ES6 to ES2015 (probably not possible)
 - [ ] gh-pages branch with transcompiled assets
 - [ ] Intro screen before game starts

@@ -4,17 +4,19 @@ class Game {
 
     constructor() {
         window.addEventListener('keypress', e => this._handleInputChar(e.key));
-        this.currentLevel = new Level;
+        this.practise = 0;
+        this.inputBuffer = "";
         this.stack = new Stack('stack');
         this.score = new ScoreDisplay('progress','timer');
+        this.score.setQuestionCount(10);
+        this.currentLevel = new Level(this.score.questionCount);
         this._displayQuestions();
-        this.inputBuffer = "";
     }
 
     _handleInputChar(char) {
         this.inputBuffer += char;
 
-        if (this.score.timerStopped == false) {
+        if (this.score.timerStopped == true) {
             this.score.startTimer(); 
         }
 
@@ -52,6 +54,7 @@ class Game {
 
         if (this.currentLevel.data.length == 0) {
             console.info('end game');
+            this.score.endTimer();
         }
     }
 
@@ -83,7 +86,7 @@ class Stack {
         this.stack.childNodes[0].className += "slide";
         setTimeout(function(){
             this.stack.removeChild(this.stack.childNodes[0]);
-        },300)
+        },300);
         
     }
 
@@ -100,16 +103,16 @@ class Stack {
 
 class Level {
 
-    constructor() {
+    constructor(questionCount) {
         this.weight = [0.75, 0.2, 0.049, 0.001]
         this.list = Object.getOwnPropertyNames(hiragana);
-        this.data = this.generateLevel();
+        this.data = this.generateLevel(questionCount);
     }
 
-    generateLevel() {
+    generateLevel(questionCount) {
         let level = [];
 
-        for (let i = 0;i < 100; i++) {
+        for (let i = 0;i < questionCount; i++) {
             let listGroup = Random.getItem(this.list,this.weight);
             let listItem = ~~(Math.random() * hiragana[listGroup].length);
             level.push(hiragana[listGroup][listItem]);
@@ -124,13 +127,14 @@ class ScoreDisplay {
     constructor(progressId, timerId) {
         this.score = document.getElementById(progressId);
         this.timer = document.getElementById(timerId);
+        this.questionCount = 100;
         this._init();
     }
 
     _init() {
         this.startTime = 0;
         this.endTime = 0;
-        this.timerStopped = false;
+        this.timerStopped = true;
         this.progress = 0;
     }
 
@@ -139,29 +143,30 @@ class ScoreDisplay {
         this.injectProgress();
     }
 
+    setQuestionCount(questionCount) {
+        this.questionCount = questionCount;
+        this.injectProgress();
+    }
+
     startTimer() {
         if (this.startTime == 0) {
-            this.timerStopped = true;
+            this.timerStopped = false;
             this.startTime = new Date;
             requestAnimationFrame(this.updateTimer.bind(this));
         }
     }
 
     updateTimer() {
-        if(this.timerStopped){
+        if(!this.timerStopped){
             requestAnimationFrame(this.updateTimer.bind(this));
             this.injectTime();
         }
     }
 
     endTimer() {
-        if (this.timerUpdateId == 0) {
-            this.endTime = new Date;
-        }
-        if (this.updateTimer) {
-            this.timerStopped = true;
-        }
-        this.getSecondsElapsed(this.startTime, this.endTime);
+        this.endTime = new Date;
+        this.timerStopped = true;
+        var finalTime = this.getSecondsElapsed(this.startTime, this.endTime);
     }
 
     getSecondsElapsed(start, end) {
@@ -170,7 +175,7 @@ class ScoreDisplay {
 
     getProgress() {
         // TODO: variable level length
-        return this.progress + '/100';
+        return this.progress + '/' + this.questionCount;
     }
 
     getGrade() {
