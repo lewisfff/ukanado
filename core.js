@@ -4,11 +4,13 @@ class Game {
 
     constructor() {
         window.addEventListener('keypress', e => this._handleInputChar(e.key));
-        this.currentLevel = new Level;
+        this.practise = 0;
+        this.inputBuffer = "";
         this.stack = new Stack('stack');
         this.score = new ScoreDisplay('progress','timer');
+        this.score.setQuestionCount(10);
+        this.currentLevel = new Level(this.score.questionCount);
         this._displayQuestions();
-        this.inputBuffer = "";
     }
 
     _handleInputChar(char) {
@@ -83,7 +85,7 @@ class Stack {
         this.stack.childNodes[0].className += "slide";
         setTimeout(function(){
             this.stack.removeChild(this.stack.childNodes[0]);
-        },300)
+        },300);
         
     }
 
@@ -100,16 +102,16 @@ class Stack {
 
 class Level {
 
-    constructor() {
+    constructor(questionCount) {
         this.weight = [0.75, 0.2, 0.049, 0.001]
         this.list = Object.getOwnPropertyNames(hiragana);
-        this.data = this.generateLevel();
+        this.data = this.generateLevel(questionCount);
     }
 
-    generateLevel() {
+    generateLevel(questionCount) {
         let level = [];
 
-        for (let i = 0;i < 100; i++) {
+        for (let i = 0;i < questionCount; i++) {
             let listGroup = Random.getItem(this.list,this.weight);
             let listItem = ~~(Math.random() * hiragana[listGroup].length);
             level.push(hiragana[listGroup][listItem]);
@@ -124,6 +126,7 @@ class ScoreDisplay {
     constructor(progressId, timerId) {
         this.score = document.getElementById(progressId);
         this.timer = document.getElementById(timerId);
+        this.questionCount = 100;
         this._init();
     }
 
@@ -136,6 +139,11 @@ class ScoreDisplay {
 
     incrementProgress() {
         this.progress++;
+        this.injectProgress();
+    }
+
+    setQuestionCount(questionCount) {
+        this.questionCount = questionCount;
         this.injectProgress();
     }
 
@@ -170,7 +178,7 @@ class ScoreDisplay {
 
     getProgress() {
         // TODO: variable level length
-        return this.progress + '/100';
+        return this.progress + '/' + this.questionCount;
     }
 
     getGrade() {
@@ -187,6 +195,7 @@ class ScoreDisplay {
     }
 
     injectProgress() {
+        console.log('why');
         this.score.innerHTML = this.getProgress();
     }
 
