@@ -80,7 +80,11 @@ class Stack {
     }
 
     shift() {
-        this.stack.removeChild(this.stack.childNodes[0]);
+        this.stack.childNodes[0].className += "slide";
+        setTimeout(function(){
+            this.stack.removeChild(this.stack.childNodes[0]);
+        },300)
+        
     }
 
     inject(array) {
@@ -97,7 +101,7 @@ class Stack {
 class Level {
 
     constructor() {
-        this.weight = [0.65, 0.25, 0.09, 0.01]
+        this.weight = [0.75, 0.2, 0.049, 0.001]
         this.list = Object.getOwnPropertyNames(hiragana);
         this.data = this.generateLevel();
     }
@@ -107,7 +111,8 @@ class Level {
 
         for (let i = 0;i < 100; i++) {
             let listGroup = Random.getItem(this.list,this.weight);
-            level.push(hiragana[listGroup][~~(Math.random() * hiragana[listGroup].length)]);
+            let listItem = ~~(Math.random() * hiragana[listGroup].length);
+            level.push(hiragana[listGroup][listItem]);
         }
         return level;
     }
