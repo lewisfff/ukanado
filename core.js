@@ -417,7 +417,7 @@ var hiragana = {
         {ふょ: 'fyo'}
     ],
 
-    obselete: [
+    obsolete: [
         {ゐ: 'wi'},
         {ゑ: 'we'}
     ]
