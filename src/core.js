@@ -7,7 +7,7 @@ class Game {
         this.practise = 0;
         this.inputBuffer = "";
         this.stack = new Stack('stack');
-        this.score = new ScoreDisplay('progress','timer');
+        this.score = new ScoreDisplay('progress','timer','end-screen');
         this.score.setQuestionCount(10);
         this.currentLevel = new Level(this.score.questionCount);
         this._displayQuestions();
@@ -17,6 +17,10 @@ class Game {
         this.inputBuffer += char;
 
         if (this.score.timerStopped == true) {
+            if (this.score.endTime) {
+                // TODO: handle this without reload
+                location.reload();
+            }
             this.score.startTimer(); 
         }
 
@@ -53,7 +57,6 @@ class Game {
         this.score.incrementProgress();
 
         if (this.currentLevel.data.length == 0) {
-            console.info('end game');
             this.score.endTimer();
         }
     }
@@ -124,9 +127,10 @@ class Level {
 
 class ScoreDisplay {
 
-    constructor(progressId, timerId) {
+    constructor(progressId, timerId, endScreenId) {
         this.score = document.getElementById(progressId);
         this.timer = document.getElementById(timerId);
+        this.endScreen = document.getElementById(endScreenId);
         this.questionCount = 100;
         this._init();
     }
@@ -136,6 +140,7 @@ class ScoreDisplay {
         this.endTime = 0;
         this.timerStopped = true;
         this.progress = 0;
+        this.endScreen.className = "";
     }
 
     incrementProgress() {
@@ -167,6 +172,7 @@ class ScoreDisplay {
         this.endTime = new Date;
         this.timerStopped = true;
         var finalTime = this.getSecondsElapsed(this.startTime, this.endTime);
+        this.injectTimerEnd(finalTime);
     }
 
     getSecondsElapsed(start, end) {
@@ -174,7 +180,6 @@ class ScoreDisplay {
     }
 
     getProgress() {
-        // TODO: variable level length
         return this.progress + '/' + this.questionCount;
     }
 
@@ -193,6 +198,13 @@ class ScoreDisplay {
 
     injectProgress() {
         this.score.innerHTML = this.getProgress();
+    }
+
+    injectTimerEnd(finalTime) {
+        console.log(this.endScreen);
+        console.log(this.endScreen.childNodes[1]);
+        this.endScreen.className += "active";
+        this.endScreen.childNodes[3].innerHTML = finalTime.toFixed(1);;
     }
 
 }
