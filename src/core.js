@@ -201,8 +201,6 @@ class ScoreDisplay {
     }
 
     injectTimerEnd(finalTime) {
-        console.log(this.endScreen);
-        console.log(this.endScreen.childNodes[1]);
         this.endScreen.className += "active";
         this.endScreen.childNodes[3].innerHTML = finalTime.toFixed(1);;
     }
