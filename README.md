@@ -9,14 +9,14 @@ Your web browser must support ES6 to use this version, a compiled (ES2015) versi
 
 ### Todo
 - [x] Timer & progress update to screen
-- [ ] Timer end & progress display result (with reset button)
-- [ ] Timer reset
+- [x] Timer end & progress display result
+- [x] Timer reset mechanism
 - [x] All kana (including digraphs, diacritics and obsolete)
 - [ ] Katakana conversion (unicode)
 - [ ] Split classes into separate files and refactor (needed)
 - [x] Slide stack up when complete question
-- [ ] Github pages transpile ES6 to ES2015 (probably not possible)
-- [ ] gh-pages branch with transcompiled assets
+- [x] Compile assets to ES2015 (rollup + babel)
 - [ ] Intro screen before game starts
 - [ ] Save previous time to cookie & display on reload
 - [ ] Training mode - displays romaji above kana
+- [ ] Calculate accuracy (compare length of total kana vs total keys entered)

@@ -99,3 +99,26 @@ div#score{
     width:30%;
     text-align:right;
 }
+div#end-screen{
+    opacity:0;
+    transition:opacity 1s ease-in;
+    transition-delay:0.4s;
+}
+div#end-screen.active{
+    position:fixed;
+    display:block;
+    width:100%;
+    left:0;
+    top:0;
+    padding-top:2rem;
+    z-index:5;
+    text-align:center;
+    opacity:1;
+}
+div#end-time{
+    font-size:2rem;
+    color:#fff;
+    outline:2px solid #fff;
+    display:inline-block;
+    padding:0.2rem 1rem;
+}
