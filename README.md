@@ -21,3 +21,9 @@ Your web browser must support ES6 to use this version, a compiled (ES2015) versi
 - [x] Training mode - displays romaji above kana
 - [ ] Calculate accuracy (compare length of total kana vs total keys entered)
 - [ ] Make the game work on mobile devices somehow
+- [ ] Improve random function so that stack characters are unique
+- [ ] Define the data better so that unused digraphs are not presented
+- [ ] Ability to tweak weightings & difficulty
+- [ ] Ability to toggle infinite mode
+- [ ] Ability to turn off practise mode
+- [ ] Allow non-standard key combinations (like si for shi)
