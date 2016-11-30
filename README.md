@@ -12,7 +12,7 @@ Your web browser must support ES6 to use this version, a compiled (ES2015) versi
 - [x] Timer end & progress display result
 - [x] Timer reset mechanism
 - [x] All kana (including digraphs, diacritics and obsolete)
-- [ ] Katakana conversion (unicode)
+- [x] Katakana conversion (unicode)
 - [ ] Split classes into separate files and refactor (needed)
 - [x] Slide stack up when complete question
 - [x] Compile assets to ES2015 (rollup + babel)
