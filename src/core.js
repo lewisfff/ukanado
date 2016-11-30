@@ -41,13 +41,13 @@ class Game {
     }
 
     _displayQuestions() {
-        let questions = [];
-        let levelData = this.currentLevel.data;
-        for (let i = 0; i < levelData.length; i++) {
-            questions.push(Object.keys(levelData[i])[0]);
-        }
+        // let questions = [];
+        // let levelData = this.currentLevel.data;
+        // for (let i = 0; i < levelData.length; i++) {
+        //     questions.push(Object.keys(levelData[i])[0]);
+        // }
 
-        this.stack.inject(questions);
+        this.stack.inject(this.currentLevel.data);
     }
 
     clearCurrentQuiz() {
@@ -75,6 +75,7 @@ class Stack {
 
     constructor(stackId) {
         this.stack = document.getElementById(stackId);
+        this.training = true;
     }
 
     _getHTML() {
@@ -96,7 +97,11 @@ class Stack {
     inject(array) {
         let html = ""
         for (let i = 0; i < array.length; i++) {
-            html += "<div>" + array[i] + "</div>";
+            html += '<div ';
+            if (this.training == true) {
+                html += 'romaji="' + Object.values(array[i]) + '"';
+            }
+            html += '>' + Object.keys(array[i]) + '</div>';
         }
 
         this._setHTML(html);
