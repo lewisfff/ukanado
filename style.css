@@ -8,7 +8,7 @@ html{
     padding:0;
     background:rgb(51,51,68);
     color:#fec;
-    font:22px/1.5 "Noto Serif",serif,sans-serif;
+    font:22px/1.5 "Noto Serif",Georgia,"Liberation Serif",serif,sans-serif;
 }
 body{
     max-width:1024px;

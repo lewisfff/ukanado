@@ -27,3 +27,4 @@ Your web browser must support ES6 to use this version, a compiled (ES2015) versi
 - [ ] Ability to toggle infinite mode
 - [ ] Ability to turn off practise mode
 - [ ] Allow non-standard key combinations (like si for shi)
+- [ ] Display hints after a few seconds of typing wrong
