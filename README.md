@@ -18,5 +18,6 @@ Your web browser must support ES6 to use this version, a compiled (ES2015) versi
 - [x] Compile assets to ES2015 (rollup + babel)
 - [ ] Intro screen before game starts
 - [ ] Save previous time to cookie & display on reload
-- [ ] Training mode - displays romaji above kana
+- [x] Training mode - displays romaji above kana
 - [ ] Calculate accuracy (compare length of total kana vs total keys entered)
+- [ ] Make the game work on mobile devices somehow

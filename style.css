@@ -60,6 +60,19 @@ div#stack>div:first-of-type{
     color:#fff;
     margin-bottom:0.6rem;
 }
+div#stack>div:first-of-type[romaji]:after{
+    font-size:1rem;
+    content:attr(romaji);
+    position:fixed;
+    width:100%;
+    text-align:center;
+    display:block;
+    top:1.8rem;
+    left:0;
+    letter-spacing:0.5rem;
+    padding-left:0.25rem;
+    color:#99a;
+}
 div#stack>div.slide{
     margin-top:-0.6rem;
     font-size:0;

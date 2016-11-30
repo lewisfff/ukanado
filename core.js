@@ -156,13 +156,13 @@ var Game = function () {
     }, {
         key: '_displayQuestions',
         value: function _displayQuestions() {
-            var questions = [];
-            var levelData = this.currentLevel.data;
-            for (var i = 0; i < levelData.length; i++) {
-                questions.push(Object.keys(levelData[i])[0]);
-            }
+            // let questions = [];
+            // let levelData = this.currentLevel.data;
+            // for (let i = 0; i < levelData.length; i++) {
+            //     questions.push(Object.keys(levelData[i])[0]);
+            // }
 
-            this.stack.inject(questions);
+            this.stack.inject(this.currentLevel.data);
         }
     }, {
         key: 'clearCurrentQuiz',
@@ -195,6 +195,7 @@ var Stack = function () {
         classCallCheck(this, Stack);
 
         this.stack = document.getElementById(stackId);
+        this.training = true;
     }
 
     createClass(Stack, [{
@@ -220,7 +221,11 @@ var Stack = function () {
         value: function inject(array) {
             var html = "";
             for (var i = 0; i < array.length; i++) {
-                html += "<div>" + array[i] + "</div>";
+                html += '<div ';
+                if (this.training == true) {
+                    html += 'romaji="' + Object.values(array[i]) + '"';
+                }
+                html += '>' + Object.keys(array[i]) + '</div>';
             }
 
             this._setHTML(html);
