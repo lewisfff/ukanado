@@ -28,7 +28,20 @@ var createClass = function () {
 
 
 
+var defineProperty = function (obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
 
+  return obj;
+};
 
 var get = function get(object, property, receiver) {
   if (object === null) object = Function.prototype;
@@ -106,7 +119,7 @@ var Game = function () {
         this.inputBuffer = "";
         this.stack = new Stack('stack');
         this.score = new ScoreDisplay('progress', 'timer', 'end-screen');
-        this.score.setQuestionCount(10);
+        this.score.setQuestionCount(20);
         this.currentLevel = new Level(this.score.questionCount);
         this._displayQuestions();
     }
@@ -221,7 +234,8 @@ var Level = function () {
         classCallCheck(this, Level);
 
         this.weight = [0.75, 0.2, 0.049, 0.001];
-        this.list = Object.getOwnPropertyNames(hiragana);
+        this.kana = hiragana;
+        this.list = Object.getOwnPropertyNames(this.kana);
         this.data = this.generateLevel(questionCount);
     }
 
@@ -229,11 +243,30 @@ var Level = function () {
         key: 'generateLevel',
         value: function generateLevel(questionCount) {
             var level = [];
+            var katakana = this.kana;
+            var hira_start = 0x3041;
+            var kata_start = 0x30A1;
 
-            for (var i = 0; i < questionCount; i++) {
+            for (var i in katakana) {
+                for (var prop in katakana[i]) {
+                    var hiraString = Object.keys(katakana[i][prop])[0];
+                    var hiraAnswer = Object.values(katakana[i][prop])[0];
+                    var kataString = "";
+
+                    for (var ch = 0; ch < hiraString.length; ch++) {
+                        var keyCode = hiraString[ch].charCodeAt(0);
+                        keyCode += kata_start - hira_start;
+                        var keyChar = String.fromCharCode(keyCode);
+                        kataString += keyChar;
+                    }
+                    this.kana[i].push(defineProperty({}, kataString, hiraAnswer));
+                }
+            }
+
+            for (var _i = 0; _i < questionCount; _i++) {
                 var listGroup = Random.getItem(this.list, this.weight);
-                var listItem = ~~(Math.random() * hiragana[listGroup].length);
-                level.push(hiragana[listGroup][listItem]);
+                var listItem = ~~(Math.random() * this.kana[listGroup].length);
+                level.push(this.kana[listGroup][listItem]);
             }
             return level;
         }

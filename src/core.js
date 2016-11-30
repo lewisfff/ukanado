@@ -8,7 +8,7 @@ class Game {
         this.inputBuffer = "";
         this.stack = new Stack('stack');
         this.score = new ScoreDisplay('progress','timer','end-screen');
-        this.score.setQuestionCount(10);
+        this.score.setQuestionCount(20);
         this.currentLevel = new Level(this.score.questionCount);
         this._displayQuestions();
     }
@@ -108,17 +108,37 @@ class Level {
 
     constructor(questionCount) {
         this.weight = [0.75, 0.2, 0.049, 0.001]
-        this.list = Object.getOwnPropertyNames(hiragana);
+        this.kana = hiragana;
+        this.list = Object.getOwnPropertyNames(this.kana);
         this.data = this.generateLevel(questionCount);
     }
 
     generateLevel(questionCount) {
         let level = [];
+        let katakana = this.kana;
+        let hira_start = 0x3041;
+        let kata_start = 0x30A1;
+
+        for (let i in katakana) {
+            for (let prop in katakana[i]) {
+                let hiraString = Object.keys(katakana[i][prop])[0];
+                let hiraAnswer = Object.values(katakana[i][prop])[0];
+                let kataString = "";
+
+                for (let ch = 0; ch < hiraString.length; ch++) {                
+                    let keyCode = hiraString[ch].charCodeAt(0);
+                    keyCode += kata_start - hira_start;
+                    let keyChar = String.fromCharCode(keyCode);
+                    kataString += keyChar;
+                }
+                this.kana[i].push({[kataString]: hiraAnswer});
+            }
+        }
 
         for (let i = 0;i < questionCount; i++) {
             let listGroup = Random.getItem(this.list,this.weight);
-            let listItem = ~~(Math.random() * hiragana[listGroup].length);
-            level.push(hiragana[listGroup][listItem]);
+            let listItem = ~~(Math.random() * this.kana[listGroup].length);
+            level.push(this.kana[listGroup][listItem]);
         }
         return level;
     }
