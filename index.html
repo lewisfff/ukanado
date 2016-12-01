@@ -13,10 +13,39 @@
             <h1>Score</h1>
             <p><span id="progress">0/100</span> answered<br>
             in <span id="timer">0.00</span>s</p>
+
+            <div id="options" class="embed-ui">
+                <h1>Options</h1>
+                <a href="#">-</a>
+                <input type="checkbox" name="hiragana" id="hiragana">
+                <label title="Show romaji answer above questions">Practise mode</label>
+                <input type="checkbox" name="hiragana" id="hiragana">
+                <label title="Questions get regenerated as you play">Infinite mode</label>
+            </div>
         </div>
         <div id="instructions" class="ui">
             <h1>How to play</h1>
             <p>Type the characters displayed on the screen to clear the stack.</p>
+
+            <div id="weight" class="embed-ui">
+                <h1>Weighting</h1>
+                <a href="#">-</a>
+                <label>Hiragana</label>
+                <input type="range" name="hiragana" id="hiragana">
+                <label>Katakana</label>
+                <input type="range" name="katakana" id="katakana">
+                <br>
+                <label>Vowels</label>
+                <input type="range" name="vowel" id="vowel">
+                <label>Consonants</label>
+                <input type="range" name="consonant" id="consonant">
+                <label>Diacritics</label>
+                <input type="range" name="diacritic" id="diacritic">
+                <label>Digraphs</label>
+                <input type="range" name="digraph" id="digraph">
+                <label>Obsolete</label>
+                <input type="range" name="obsolete" id="obsolete">
+            </div>
         </div>
         <div id="end-screen">
             <h3>Final time</h3>
