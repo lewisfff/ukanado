@@ -149,3 +149,23 @@ div#end-time{
     display:inline-block;
     padding:0.2rem 1rem;
 }
+
+label{
+    font-size:0.7rem;
+    line-height:1;
+    display:inline-block;
+    width:35%;
+    vertical-align:middle;
+}
+input{
+    display:inline-block;
+    width:30%;
+    margin:0;
+    vertical-align:middle;
+}
+#weight div{
+    font-size:0;
+}
+#weight div+div{
+    margin-top:0.5rem;
+}
