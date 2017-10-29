@@ -1,0 +1,10 @@
+{
+  "name": "ukanado",
+  "version": "1.0.0",
+  "description": "kana learning app",
+  "repository": "https://github.com/lewisfff/ukanado.git",
+  "license": "Unlicense",
+  "author": "lewisfff",
+  "dependencies": {
+  }
+}
