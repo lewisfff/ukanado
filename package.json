@@ -6,5 +6,22 @@
   "license": "Unlicense",
   "author": "lewisfff",
   "dependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-es2017": "^6.24.1",
+    "jasmine": "^2.8.0",
+    "jasmine-core": "^2.8.0",
+    "karma": "^1.7.1",
+    "karma-jasmine": "^1.1.0",
+    "karma-phantomjs-launcher": "^1.0.4",
+    "karma-webpack": "^2.0.5",
+    "webpack": "^3.8.1",
+    "webpack-strip": "^0.1.0"
+  },
+  "scripts": {
+    "build-dev": "./node_modules/.bin/webpack --config webpack.config.js",
+    "build-release": "./node_modules/.bin/webpack --config webpack.release.config.js",
+    "test": "karma start karma.config.js"
   }
 }
