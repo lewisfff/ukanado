@@ -21,7 +21,7 @@ class Game {
                 // TODO: handle this without reload
                 location.reload();
             }
-            this.score.startTimer(); 
+            this.score.startTimer();
         }
 
         if (this.inputBuffer.length > this.getCurrentAnswer().length) {
@@ -75,7 +75,7 @@ class Stack {
 
     constructor(stackId) {
         this.stack = document.getElementById(stackId);
-        this.training = true;
+        this.training = false;
     }
 
     _getHTML() {
@@ -91,7 +91,7 @@ class Stack {
         setTimeout(function(){
             this.stack.removeChild(this.stack.childNodes[0]);
         },300);
-        
+
     }
 
     inject(array) {
@@ -130,7 +130,7 @@ class Level {
                 let hiraAnswer = Object.values(katakana[i][prop])[0];
                 let kataString = "";
 
-                for (let ch = 0; ch < hiraString.length; ch++) {                
+                for (let ch = 0; ch < hiraString.length; ch++) {
                     let keyCode = hiraString[ch].charCodeAt(0);
                     keyCode += kata_start - hira_start;
                     let keyChar = String.fromCharCode(keyCode);
@@ -243,11 +243,11 @@ class Random {
 
         let random_num = this.getBetween(0, total_weight);
         let weight_sum = 0;
-         
+
         for (let i = 0; i < list.length; i++) {
             weight_sum += weight[i];
             weight_sum = +weight_sum.toFixed(2);
-             
+
             if (random_num <= weight_sum) {
                 return list[i];
             }
