@@ -28,7 +28,7 @@ div#stack{
     vertical-align:top;
     position: relative;
     overflow:hidden;
-    transition:0.3s ease;
+    transition:0.1s ease;
     width:6rem;
     height:24rem;
     margin:0.75rem auto;
@@ -52,9 +52,7 @@ div#stack:after{
 div#stack:empty:after{
     outline:none;
 }
-div#stack>div{
-    transition:0.22s ease-out;
-}
+
 div#stack>div:first-of-type{
     font-size:3rem;
     color:#fff;
