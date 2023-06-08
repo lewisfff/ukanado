@@ -92,31 +92,40 @@ class Game {
 
 class Settings {
     constructor() {
-        this.hiragana = true;
-        this.katakana = true;
-        this.common = true;
-        this.digraphs = true;
-        this.diacritics = true;
+        this.types = {
+            hiragana: true,
+            katakana: true,
+            common: true,
+            digraphs: true,
+            diacritics: true
+        };
+        this.resetCheckboxes();
+    }
+
+    resetCheckboxes() {
+        Object.keys(this.types).forEach(type => {
+            document.getElementById(`toggle-${type}`).checked = this.types[type];
+        });
     }
 
     setHiragana(value) {
-        this.hiragana = value;
+        this.types.hiragana = value;
     }
     
     setKatakana(value) {
-        this.katakana = value;
+        this.types.katakana = value;
     }
     
     setCommon(value) {
-        this.common = value;
+        this.types.common = value;
     }
     
     setDigraphs(value) {
-        this.digraphs = value;
+        this.types.digraphs = value;
     }
     
     setDiacritics(value) {
-        this.diacritics = value;
+        this.types.diacritics = value;
     }
 }
 
