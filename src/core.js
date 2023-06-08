@@ -22,11 +22,11 @@ class Game {
     }
 
     start() {
-        if (!this.settings.hiragana && !this.settings.katakana) {
+        if (!this.settings.types.hiragana && !this.settings.types.katakana) {
             alert("Please select either Hiragana or Katakana.");
             return;
         }
-        if (!this.settings.common && !this.settings.digraphs && !this.settings.diacritics) {
+        if (!this.settings.types.common && !this.settings.types.digraphs && !this.settings.types.diacritics) {
             alert("Please select either Common, Digraphs, or Diacritics.");
             return;
         }
@@ -165,9 +165,9 @@ class Level {
 
     getListFromSettings() {
         let list = [];
-        if (this.settings.common) list.push('common');
-        if (this.settings.digraphs) list.push('digraphs');
-        if (this.settings.diacritics) list.push('diacritics');
+        if (this.settings.types.common) list.push('common');
+        if (this.settings.types.digraphs) list.push('digraphs');
+        if (this.settings.types.diacritics) list.push('diacritics');
         return list;
     }
     
@@ -197,13 +197,13 @@ class Level {
 
         // prepare the set of questions based on settings
         let questionSet = {};
-        if (this.settings.hiragana) {
+        if (this.settings.types.hiragana) {
             for (let key in this.kana) {
                 if (!questionSet[key]) questionSet[key] = [];
                 questionSet[key] = questionSet[key].concat(this.kana[key]);
             }
         }
-        if (this.settings.katakana) {
+        if (this.settings.types.katakana) {
             for (let key in katakana) {
                 if (!questionSet[key]) questionSet[key] = [];
                 questionSet[key] = questionSet[key].concat(katakana[key]);
