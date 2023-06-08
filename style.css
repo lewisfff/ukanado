@@ -134,3 +134,26 @@ div#end-time{
     display:inline-block;
     padding:0.2rem 1rem;
 }
+div#settings{
+    padding:2rem;
+    font-size:1rem;
+    position:absolute;
+    top:0;
+    left:0;
+    width:30%;
+    text-align:right;
+    background:rgba(51,51,68,1);
+    z-index:10;
+    pointer-events: auto;
+    transition:0.3s ease;
+}
+div#settings.hidden{
+    pointer-events: none;
+    top: 10rem;
+}
+div#settings.hidden > button{
+    display: none;
+}
+div#settings.hidden > h1{
+    display: none;
+}

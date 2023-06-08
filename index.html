@@ -22,7 +22,36 @@
             <h3>Final time</h3>
             <div id="end-time">ERROR</div><br><p>Hit a key to restart</p>
         </div>
+        <div id="settings" class="ui">
+            <h1>Settings</h1>
+            <div class="toggle-container">
+                <input type="checkbox" id="toggle-hiragana" class="toggle" checked="checked">
+                <label for="toggle-hiragana">Hiragana</label>
+            </div>
+            <div class="toggle-container">
+                <input type="checkbox" id="toggle-katakana" class="toggle" checked="checked">
+                <label for="toggle-katakana">Katakana</label>
+            </div>
+
+            <div class="checkbox-container">
+                <div>
+                    <input type="checkbox" id="toggle-common" class="checkbox" checked="checked">
+                    <label for="toggle-common">Common (た）</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="toggle-diacritics" class="checkbox"  checked="checked">
+                    <label for="toggle-diacritics">Diacritics (だ)</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="toggle-digraphs" class="checkbox"  checked="checked">
+                    <label for="toggle-digraphs">Digraphs (にゃ)</label>
+                </div>
+            </div>
+        
+            <button id="start">Start</button>
+        </div>
+        
     </main>
-    <script type="text/javascript" src="./core.js"></script>
+    <script type="text/javascript" src="./src/core.js"></script>
 </body>
 </html>

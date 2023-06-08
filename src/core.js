@@ -1,22 +1,50 @@
 'use strict';
 
 class Game {
-
     constructor() {
-        window.addEventListener('keypress', e => this._handleInputChar(e.key));
-        this.practise = 0;
-        this.inputBuffer = "";
-        this.stack = new Stack('stack');
-        this.score = new ScoreDisplay('progress','timer','end-screen');
-        this.score.setQuestionCount(20);
-        this.currentLevel = new Level(this.score.questionCount);
-        this._displayQuestions();
+        document.getElementById('start').addEventListener('click', () => this.start());
+        this.settings = new Settings();
+        document.getElementById('toggle-hiragana').addEventListener('change', (event) => {
+            this.settings.setHiragana(event.target.checked);
+        });
+        document.getElementById('toggle-katakana').addEventListener('change', (event) => {
+            this.settings.setKatakana(event.target.checked);
+        });
+        document.getElementById('toggle-common').addEventListener('change', (event) => {
+            this.settings.setCommon(event.target.checked);
+        });
+        document.getElementById('toggle-digraphs').addEventListener('change', (event) => {
+            this.settings.setDigraphs(event.target.checked);
+        });
+        document.getElementById('toggle-diacritics').addEventListener('change', (event) => {
+            this.settings.setDiacritics(event.target.checked);
+        });
     }
 
-    _handleInputChar(char) {
-        this.inputBuffer += char;
+    start() {
+        if (!this.settings.hiragana && !this.settings.katakana) {
+            alert("Please select either Hiragana or Katakana.");
+            return;
+        }
+        if (!this.settings.common && !this.settings.digraphs && !this.settings.diacritics) {
+            alert("Please select either Common, Digraphs, or Diacritics.");
+            return;
+        }
+        this.practice = 0;
+        this.inputBuffer = "";
+        this.stack = new Stack('stack');
+        this.score = new ScoreDisplay('progress', 'timer', 'end-screen');
+        this.score.setQuestionCount(20);
+        this.currentLevel = new Level(this.score.questionCount, this.settings);
+        this.displayQuestions();
+        document.getElementById('settings').classList.add('hidden');
+        window.addEventListener('keypress', (e) => this.handleInputChar(e));
+    }
+    
+    handleInputChar = (e) => {
+        this.inputBuffer += e.key;
 
-        if (this.score.timerStopped == true) {
+        if (this.score.timerStopped) {
             if (this.score.endTime) {
                 // TODO: handle this without reload
                 location.reload();
@@ -24,449 +52,365 @@ class Game {
             this.score.startTimer();
         }
 
-        if (this.inputBuffer.length > this.getCurrentAnswer().length) {
+        if (this.inputBuffer.length > this.getCurrentAnswer()[0].length) {
             this.inputBuffer = this.inputBuffer.substring(1);
         }
-
-        if (this._answeredCorrectly()) {
+        
+        if (this.answeredCorrectly()) {
             this.clearCurrentQuiz();
         }
+    };
+    
+    answeredCorrectly() {
+        const currentAnswer = this.getCurrentAnswer();
+        return currentAnswer.some((answer) => answer.endsWith(this.inputBuffer));
     }
-
-    _answeredCorrectly() {
-        if (this.inputBuffer == this.getCurrentAnswer()) {
-            return true;
-        }
-        return false;
-    }
-
-    _displayQuestions() {
-        // let questions = [];
-        // let levelData = this.currentLevel.data;
-        // for (let i = 0; i < levelData.length; i++) {
-        //     questions.push(Object.keys(levelData[i])[0]);
-        // }
-
+    
+    displayQuestions() {
         this.stack.inject(this.currentLevel.data);
     }
-
+    
     clearCurrentQuiz() {
         this.inputBuffer = "";
         this.currentLevel.data.shift();
         this.stack.shift();
         this.score.incrementProgress();
-
-        if (this.currentLevel.data.length == 0) {
+        
+        if (this.currentLevel.data.length === 0) {
             this.score.endTimer();
         }
     }
-
+    
     getCurrentQuestion() {
         return Object.keys(this.currentLevel.data[0])[0];
     }
-
+    
     getCurrentAnswer() {
-        return Object.values(game.currentLevel.data[0])[0];
+        return Object.values(this.currentLevel.data[0])[0];
+    }
+}
+
+class Settings {
+    constructor() {
+        this.hiragana = true;
+        this.katakana = true;
+        this.common = true;
+        this.digraphs = true;
+        this.diacritics = true;
     }
 
+    setHiragana(value) {
+        this.hiragana = value;
+    }
+    
+    setKatakana(value) {
+        this.katakana = value;
+    }
+    
+    setCommon(value) {
+        this.common = value;
+    }
+    
+    setDigraphs(value) {
+        this.digraphs = value;
+    }
+    
+    setDiacritics(value) {
+        this.diacritics = value;
+    }
 }
 
 class Stack {
-
     constructor(stackId) {
         this.stack = document.getElementById(stackId);
         this.training = false;
     }
-
-    _getHTML() {
-        return this.stack.innerHTML;
-    }
-
-    _setHTML(str) {
-        this.stack.innerHTML = str;
-    }
-
+    
     shift() {
-        this.stack.childNodes[0].className += "slide";
-        setTimeout(function(){
-            this.stack.removeChild(this.stack.childNodes[0]);
-        },300);
-
+        this.stack.firstChild.classList.add("slide");
+        setTimeout(() => {
+            this.stack.removeChild(this.stack.firstChild);
+        }, 300);
     }
-
+    
     inject(array) {
-        let html = ""
-        for (let i = 0; i < array.length; i++) {
-            html += '<div ';
-            if (this.training == true) {
-                html += 'romaji="' + Object.values(array[i]) + '"';
-            }
-            html += '>' + Object.keys(array[i]) + '</div>';
-        }
-
-        this._setHTML(html);
+        const html = array.map((item) => this.itemToHtml(item)).join("");
+        this.stack.innerHTML = html;
     }
 
+    itemToHtml(item) {
+        const key = Object.keys(item)[0];
+        const value = Object.values(item)[0];
+        const romajiAttribute = this.training ? `romaji="${value}"` : "";
+        return `<div ${romajiAttribute}>${key}</div>`;
+    }
 }
 
 class Level {
-
-    constructor(questionCount) {
-        this.weight = [0.75, 0.2, 0.049, 0.001]
-        this.kana = hiragana;
-        this.list = Object.getOwnPropertyNames(this.kana);
+    constructor(questionCount, settings) {
+        this.kana = JSON.parse(JSON.stringify(hiragana)); // create a deep copy of hiragana
+        this.settings = settings;
+        this.list = this.getListFromSettings();
         this.data = this.generateLevel(questionCount);
     }
 
+    getListFromSettings() {
+        let list = [];
+        if (this.settings.common) list.push('common');
+        if (this.settings.digraphs) list.push('digraphs');
+        if (this.settings.diacritics) list.push('diacritics');
+        return list;
+    }
+    
     generateLevel(questionCount) {
-        let level = [];
-        let katakana = this.kana;
-        let hira_start = 0x3041;
-        let kata_start = 0x30A1;
+        const level = [];
+        const hira_start = 0x3041;
+        const kata_start = 0x30A1;
 
+        // generate katakana from hiragana
+        const katakana = JSON.parse(JSON.stringify(this.kana)); // create a deep copy
         for (let i in katakana) {
             for (let prop in katakana[i]) {
-                let hiraString = Object.keys(katakana[i][prop])[0];
-                let hiraAnswer = Object.values(katakana[i][prop])[0];
+                const hiraString = Object.keys(katakana[i][prop])[0];
+                const hiraAnswer = Object.values(katakana[i][prop])[0];
                 let kataString = "";
 
                 for (let ch = 0; ch < hiraString.length; ch++) {
                     let keyCode = hiraString[ch].charCodeAt(0);
                     keyCode += kata_start - hira_start;
-                    let keyChar = String.fromCharCode(keyCode);
+                    const keyChar = String.fromCharCode(keyCode);
                     kataString += keyChar;
                 }
-                this.kana[i].push({[kataString]: hiraAnswer});
+
+                katakana[i][prop] = { [kataString]: hiraAnswer };
             }
         }
 
-        for (let i = 0;i < questionCount; i++) {
-            let listGroup = Random.getItem(this.list,this.weight);
-            let listItem = ~~(Math.random() * this.kana[listGroup].length);
-            level.push(this.kana[listGroup][listItem]);
+        // prepare the set of questions based on settings
+        let questionSet = {};
+        if (this.settings.hiragana) {
+            for (let key in this.kana) {
+                if (!questionSet[key]) questionSet[key] = [];
+                questionSet[key] = questionSet[key].concat(this.kana[key]);
+            }
+        }
+        if (this.settings.katakana) {
+            for (let key in katakana) {
+                if (!questionSet[key]) questionSet[key] = [];
+                questionSet[key] = questionSet[key].concat(katakana[key]);
+            }
+        }
+    
+        for (let i = 0; i < questionCount; i++) {
+            const listGroup = Random.getItem(this.list);
+            const listItem = Math.floor(Math.random() * questionSet[listGroup].length);
+            level.push(questionSet[listGroup][listItem]);
         }
         return level;
     }
-
 }
 
 class ScoreDisplay {
-
     constructor(progressId, timerId, endScreenId) {
         this.score = document.getElementById(progressId);
         this.timer = document.getElementById(timerId);
         this.endScreen = document.getElementById(endScreenId);
         this.questionCount = 100;
-        this._init();
+        this.init();
     }
-
-    _init() {
+    
+    init() {
         this.startTime = 0;
         this.endTime = 0;
         this.timerStopped = true;
         this.progress = 0;
-        this.endScreen.className = "";
+        this.endScreen.classList.remove("active");
     }
-
+    
     incrementProgress() {
         this.progress++;
         this.injectProgress();
     }
-
+    
     setQuestionCount(questionCount) {
         this.questionCount = questionCount;
         this.injectProgress();
     }
-
+    
     startTimer() {
-        if (this.startTime == 0) {
+        if (this.startTime === 0) {
             this.timerStopped = false;
-            this.startTime = new Date;
-            requestAnimationFrame(this.updateTimer.bind(this));
+            this.startTime = new Date();
+            requestAnimationFrame(this.updateTimer);
         }
     }
-
-    updateTimer() {
-        if(!this.timerStopped){
-            requestAnimationFrame(this.updateTimer.bind(this));
+    
+    updateTimer = () => {
+        if (!this.timerStopped) {
+            requestAnimationFrame(this.updateTimer);
             this.injectTime();
         }
-    }
-
+    };
+    
     endTimer() {
-        this.endTime = new Date;
+        this.endTime = new Date();
         this.timerStopped = true;
-        var finalTime = this.getSecondsElapsed(this.startTime, this.endTime);
+        const finalTime = this.getSecondsElapsed(this.startTime, this.endTime);
         this.injectTimerEnd(finalTime);
     }
-
+    
     getSecondsElapsed(start, end) {
         return (end - start) / 1000;
     }
-
+    
     getProgress() {
-        return this.progress + '/' + this.questionCount;
+        return `${this.progress}/${this.questionCount}`;
     }
-
+    
     getGrade() {
         return this.time / this.answered;
     }
-
+    
     reset() {
-        this._init();
+        this.init();
     }
-
+    
     injectTime() {
-        let time = this.getSecondsElapsed(this.startTime, new Date)
+        const time = this.getSecondsElapsed(this.startTime, new Date());
         this.timer.innerHTML = time.toFixed(1);
     }
-
+    
     injectProgress() {
         this.score.innerHTML = this.getProgress();
     }
-
+    
     injectTimerEnd(finalTime) {
-        this.endScreen.className += "active";
-        this.endScreen.childNodes[3].innerHTML = finalTime.toFixed(1);;
+        this.endScreen.classList.add("active");
+        this.endScreen.childNodes[3].innerHTML = finalTime.toFixed(1);
     }
-
 }
 
 class Random {
-
     static getBetween(min, max) {
         return Math.random() * (max - min) + min;
     }
-
-    static getItem(list, weight) {
-        let total_weight = weight.reduce((prev, cur, i, arr) => prev + cur);
-
-        let random_num = this.getBetween(0, total_weight);
-        let weight_sum = 0;
-
-        for (let i = 0; i < list.length; i++) {
-            weight_sum += weight[i];
-            weight_sum = +weight_sum.toFixed(2);
-
-            if (random_num <= weight_sum) {
-                return list[i];
-            }
-        }
+    
+    static getItem(list) {
+        return list[Math.floor(Math.random() * list.length)];
     }
-
 }
 
-var hiragana = {
-
-    kana: [
-
-        {あ: 'a'},
-        {い: 'i'},
-        {う: 'u'},
-        {え: 'e'},
-        {お: 'o'},
-        {か: 'ka'},
-        {き: 'ki'},
-        {く: 'ku'},
-        {け: 'ke'},
-        {こ: 'ko'},
-        {さ: 'sa'},
-        {す: 'su'},
-        {せ: 'se'},
-        {そ: 'so'},
-        {し: 'shi'},
-        {た: 'ta'},
-        {ち: 'chi'},
-        {つ: 'tsu'},
-        {て: 'te'},
-        {と: 'to'},
-        {な: 'na'},
-        {に: 'ni'},
-        {ぬ: 'nu'},
-        {ね: 'ne'},
-        {の: 'no'},
-        {は: 'ha'},
-        {ひ: 'hi'},
-        {ふ: 'fu'},
-        {へ: 'he'},
-        {ほ: 'ho'},
-        {ま: 'ma'},
-        {み: 'mi'},
-        {む: 'mu'},
-        {め: 'me'},
-        {も: 'mo'},
-        {や: 'ya'},
-        {ゆ: 'yu'},
-        {よ: 'yo'},
-        {ら: 'ra'},
-        {り: 'ri'},
-        {る: 'ru'},
-        {れ: 're'},
-        {ろ: 'ro'},
-        {わ: 'wa'},
-        {を: 'wo'},
-        {ん: 'n'},
+const hiragana = {
+    common: [
+        { あ: ['a'] },
+        { い: ['i'] },
+        { う: ['u'] },
+        { え: ['e'] },
+        { お: ['o'] },
+        { か: ['ka'] },
+        { き: ['ki'] },
+        { く: ['ku'] },
+        { け: ['ke'] },
+        { こ: ['ko'] },
+        { さ: ['sa'] },
+        { し: ['shi', 'si'] },
+        { す: ['su'] },
+        { せ: ['se'] },
+        { そ: ['so'] },
+        { た: ['ta'] },
+        { ち: ['chi', 'ti'] },
+        { つ: ['tsu'] },
+        { て: ['te'] },
+        { と: ['to'] },
+        { な: ['na'] },
+        { に: ['ni'] },
+        { ぬ: ['nu'] },
+        { ね: ['ne'] },
+        { の: ['no'] },
+        { は: ['ha'] },
+        { ひ: ['hi'] },
+        { ふ: ['fu', 'hu'] },
+        { へ: ['he'] },
+        { ほ: ['ho'] },
+        { ま: ['ma'] },
+        { み: ['mi'] },
+        { む: ['mu'] },
+        { め: ['me'] },
+        { も: ['mo'] },
+        { や: ['ya'] },
+        { ゆ: ['yu'] },
+        { よ: ['yo'] },
+        { ら: ['ra'] },
+        { り: ['ri'] },
+        { る: ['ru'] },
+        { れ: ['re'] },
+        { ろ: ['ro'] },
+        { わ: ['wa'] },
+        { を: ['wo'] },
+        { ん: ['n'] },
     ],
-
-    diacritics: [
-        {ゔ: 'vu'},
-        {が: 'ga'},
-        {ぎ: 'gi'},
-        {ぐ: 'gu'},
-        {げ: 'ge'},
-        {ご: 'go'},
-        {ざ: 'za'},
-        {ず: 'zu'},
-        {ぜ: 'ze'},
-        {ぞ: 'zo'},
-        {じ: 'ji'},
-        {だ: 'da'},
-        {ぢ: 'di'},
-        {づ: 'du'},
-        {で: 'de'},
-        {ど: 'do'},
-        {ば: 'ba'},
-        {び: 'bi'},
-        {ぶ: 'bu'},
-        {べ: 'be'},
-        {ぼ: 'bo'},
-        {ぱ: 'pa'},
-        {ぴ: 'pi'},
-        {ぷ: 'pu'},
-        {ぺ: 'pe'},
-        {ぽ: 'po'}
-    ],
-
     digraphs: [
-        {ゔぁ: 'va'},
-        {ゔぃ: 'vi'},
-        {ゔぇ: 've'},
-        {ゔぉ: 'vo'},
-        {きゃ: 'kya'},
-        {きぃ: 'kyi'},
-        {きゅ: 'kyu'},
-        {ぎゃ: 'gya'},
-        {ぎぃ: 'gyi'},
-        {ぎゅ: 'gyu'},
-        {ぎぇ: 'gye'},
-        {ぎょ: 'gyo'},
-        {しゃ: 'sha'},
-        {しゅ: 'shu'},
-        {しょ: 'sho'},
-        {じゃ: 'ja'},
-        {じゅ: 'ju'},
-        {じょ: 'jo'},
-        {ちゃ: 'cha'},
-        {ちゅ: 'chu'},
-        {ちょ: 'cho'},
-        {にゃ: 'nya'},
-        {にゅ: 'nyu'},
-        {にょ: 'nyo'},
-        {ひゃ: 'hya'},
-        {ひゅ: 'hyu'},
-        {ひょ: 'hyo'},
-        {びゃ: 'bya'},
-        {びゅ: 'byu'},
-        {びょ: 'byo'},
-        {ぴゃ: 'pya'},
-        {ぴゅ: 'pyu'},
-        {ぴょ: 'pyo'},
-        {ふぁ: 'fa'},
-        {ふぃ: 'fi'},
-        {ふぇ: 'fe'},
-        {ふぉ: 'fo'},
-        {みゃ: 'mya'},
-        {みゅ: 'myu'},
-        {みょ: 'myo'},
-        {りゃ: 'rya'},
-        {りゅ: 'ryu'},
-        {りょ: 'ryo'},
-        {きぇ: 'kye'},
-        {きょ: 'kyo'},
-        {じぃ: 'jyi'},
-        {じぇ: 'jye'},
-        {ちぃ: 'cyi'},
-        {ちぇ: 'che'},
-        {ひぃ: 'hyi'},
-        {ひぇ: 'hye'},
-        {びぃ: 'byi'},
-        {びぇ: 'bye'},
-        {ぴぃ: 'pyi'},
-        {ぴぇ: 'pye'},
-        {みぇ: 'mye'},
-        {みぃ: 'myi'},
-        {りぃ: 'ryi'},
-        {りぇ: 'rye'},
-        {にぃ: 'nyi'},
-        {にぇ: 'nye'},
-        {しぃ: 'syi'},
-        {しぇ: 'she'},
-        {いぇ: 'ye'},
-        {うぁ: 'wha'},
-        {うぉ: 'who'},
-        {うぃ: 'wi'},
-        {うぇ: 'we'},
-        {ゔゃ: 'vya'},
-        {ゔゅ: 'vyu'},
-        {ゔょ: 'vyo'},
-        {すぁ: 'swa'},
-        {すぃ: 'swi'},
-        {すぅ: 'swu'},
-        {すぇ: 'swe'},
-        {すぉ: 'swo'},
-        {くゃ: 'qya'},
-        {くゅ: 'qyu'},
-        {くょ: 'qyo'},
-        {くぁ: 'qwa'},
-        {くぃ: 'qwi'},
-        {くぅ: 'qwu'},
-        {くぇ: 'qwe'},
-        {くぉ: 'qwo'},
-        {ぐぁ: 'gwa'},
-        {ぐぃ: 'gwi'},
-        {ぐぅ: 'gwu'},
-        {ぐぇ: 'gwe'},
-        {ぐぉ: 'gwo'},
-        {つぁ: 'tsa'},
-        {つぃ: 'tsi'},
-        {つぇ: 'tse'},
-        {つぉ: 'tso'},
-        {てゃ: 'tha'},
-        {てぃ: 'thi'},
-        {てゅ: 'thu'},
-        {てぇ: 'the'},
-        {てょ: 'tho'},
-        {とぁ: 'twa'},
-        {とぃ: 'twi'},
-        {とぅ: 'twu'},
-        {とぇ: 'twe'},
-        {とぉ: 'two'},
-        {ぢゃ: 'dya'},
-        {ぢぃ: 'dyi'},
-        {ぢゅ: 'dyu'},
-        {ぢぇ: 'dye'},
-        {ぢょ: 'dyo'},
-        {でゃ: 'dha'},
-        {でぃ: 'dhi'},
-        {でゅ: 'dhu'},
-        {でぇ: 'dhe'},
-        {でょ: 'dho'},
-        {どぁ: 'dwa'},
-        {どぃ: 'dwi'},
-        {どぅ: 'dwu'},
-        {どぇ: 'dwe'},
-        {どぉ: 'dwo'},
-        {ふぅ: 'fwu'},
-        {ふゃ: 'fya'},
-        {ふゅ: 'fyu'},
-        {ふょ: 'fyo'}
+        { きゃ: ['kya'] },
+        { きゅ: ['kyu'] },
+        { きょ: ['kyo'] },
+        { しゃ: ['sha'] },
+        { しゅ: ['shu'] },
+        { しょ: ['sho'] },
+        { ちゃ: ['cha'] },
+        { ちゅ: ['chu'] },
+        { ちょ: ['cho'] },
+        { にゃ: ['nya'] },
+        { にゅ: ['nyu'] },
+        { にょ: ['nyo'] },
+        { ひゃ: ['hya'] },
+        { ひゅ: ['hyu'] },
+        { ひょ: ['hyo'] },
+        { みゃ: ['mya'] },
+        { みゅ: ['myu'] },
+        { みょ: ['myo'] },
+        { りゃ: ['rya'] },
+        { りゅ: ['ryu'] },
+        { りょ: ['ryo'] },
+        { ぎゃ: ['gya'] },
+        { ぎゅ: ['gyu'] },
+        { ぎょ: ['gyo'] },
+        { じゃ: ['ja', 'jya'] },
+        { じゅ: ['ju', 'jyu'] },
+        { じょ: ['jo', 'jyo'] },
+        { びゃ: ['bya'] },
+        { びゅ: ['byu'] },
+        { びょ: ['byo'] },
+        { ぴゃ: ['pya'] },
+        { ぴゅ: ['pyu'] },
+        { ぴょ: ['pyo'] },
     ],
-
-    obsolete: [
-        {ゐ: 'wi'},
-        {ゑ: 'we'}
-    ]
-
+    diacritics: [
+        { が: ['ga'] },
+        { ぎ: ['gi'] },
+        { ぐ: ['gu'] },
+        { げ: ['ge'] },
+        { ご: ['go'] },
+        { ざ: ['za'] },
+        { じ: ['ji'] },
+        { ず: ['zu'] },
+        { ぜ: ['ze'] },
+        { ぞ: ['zo'] },
+        { だ: ['da'] },
+        { ぢ: ['ji', 'di'] },
+        { づ: ['zu', 'du'] },
+        { で: ['de'] },
+        { ど: ['do'] },
+        { ば: ['ba'] },
+        { び: ['bi'] },
+        { ぶ: ['bu'] },
+        { べ: ['be'] },
+        { ぼ: ['bo'] },
+        { ぱ: ['pa'] },
+        { ぴ: ['pi'] },
+        { ぷ: ['pu'] },
+        { ぺ: ['pe'] },
+        { ぽ: ['po'] },
+    ],
 };
 
-var game = new Game;
+const game = new Game();
